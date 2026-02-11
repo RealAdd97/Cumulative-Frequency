@@ -970,8 +970,10 @@
                 <h2 class="slide-header">What is Cumulative Frequency?</h2>
                 
                 <div class="definition-box">
-                    Cumulative frequency is the <strong style="color: var(--orange);">running total</strong> of frequencies in a frequency distribution. It shows how many data values are <strong style="color: var(--orange);">less than or equal to</strong> a given value.
-                </div>
+                    <strong style="color: var(--orange);">Cumulative Frequency</strong> is the <strong style="color: var(--orange);">running total</strong> of frequencies in a frequency distribution. It shows how many data values are <strong style="color: var(--orange);">less than or equal to</strong> a given value.
+                    A <strong style="color: var(--orange);">Cumulative Frequency Graph</strong> is used with datas that are <strong style="color: var(--orange);">grouped</strong> and shows<strong style="color: var(--orange);"> data up to a certain value(maximum)
+                </strong>. Useful for finding estimates of percentiles and quartiles
+              </div>
 
                 <div class="two-col">
                     <div class="example-card">
@@ -1256,7 +1258,7 @@
         <section class="slide slide-9" data-slide="9">
             <div class="content-wrapper">
                 <h2 class="slide-header">Worked Example</h2>
-                
+                <button onclick="myFunction3()" class="demo-button">Show/Hide MS</button>
                 <div class="problem-solution-grid">
                     <div class="problem-box">
                         <h3>Problem</h3>
@@ -1276,7 +1278,7 @@
                         <p style="font-style: italic;">Find the median and IQR.</p>
                     </div>
 
-                    <div class="solution-box">
+                    <div class="solution-box" id = "myDIV3" style="display: none;">
                         <h3>Solution</h3>
                         <div class="solution-step">
                             <strong>Step 1:</strong> Create CF table<br>
@@ -1401,7 +1403,7 @@
                     </div>
                 </div>
                 
-                <div class="marking-scheme" id="myDIV">
+                <div class="marking-scheme" id="myDIV" style="display: none;">
                     <h3>Marking Scheme</h3>
                     
                     <div class="mark-point">
@@ -1472,7 +1474,7 @@
                     </div>
                 </div>
                 
-                <div class="marking-scheme" id="myDIV2">
+                <div class="marking-scheme" id="myDIV2" style="display: none;">
                     <h3>Marking Scheme</h3>
                     
                     <div class="mark-point">
@@ -1533,6 +1535,14 @@
 }
 function myFunction2() {
   var x = document.getElementById("myDIV2");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+function myFunction3() {
+  var x = document.getElementById("myDIV3");
   if (x.style.display === "none") {
     x.style.display = "block";
   } else {
