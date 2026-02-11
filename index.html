@@ -1,0 +1,2047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cumulative Frequency | A Level Mathematics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Crimson+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #0A0A0A;
+            --dark-gray: #1A1A1A;
+            --orange: #FF6B35;
+            --light-orange: #FF8C61;
+            --pale-orange: #FFE5DC;
+            --white: #FFFFFF;
+            --off-white: #F8F8F8;
+        }
+
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: var(--black);
+            color: var(--white);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            height: 100vh;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .slide {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            scroll-snap-align: start;
+            padding: 4rem;
+            position: relative;
+        }
+
+        /* Scroll-driven animations */
+        @supports (animation-timeline: view()) {
+            .slide {
+                animation: fade-in linear both;
+                animation-timeline: view();
+                animation-range: entry 0% cover 30%;
+            }
+
+            @keyframes fade-in {
+                from {
+                    opacity: 0;
+                    transform: translateY(50px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .slide-header {
+                animation: slide-in linear both;
+                animation-timeline: view();
+                animation-range: entry 0% cover 25%;
+            }
+
+            @keyframes slide-in {
+                from {
+                    opacity: 0;
+                    transform: translateX(-100px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+
+            .example-card, .key-point, .step-item {
+                animation: scale-in linear both;
+                animation-timeline: view();
+                animation-range: entry 0% cover 40%;
+            }
+
+            @keyframes scale-in {
+                from {
+                    opacity: 0;
+                    transform: scale(0.8);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+
+            .chart-wrapper, .interactive-demo {
+                animation: fade-in-up linear both;
+                animation-timeline: view();
+                animation-range: entry 0% cover 35%;
+            }
+
+            @keyframes fade-in-up {
+                from {
+                    opacity: 0;
+                    transform: translateY(80px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .quartile-card {
+                animation: bounce-in linear both;
+                animation-timeline: view();
+                animation-range: entry 10% cover 50%;
+            }
+
+            @keyframes bounce-in {
+                0% {
+                    opacity: 0;
+                    transform: scale(0.3) rotate(-20deg);
+                }
+                50% {
+                    transform: scale(1.05) rotate(2deg);
+                }
+                100% {
+                    opacity: 1;
+                    transform: scale(1) rotate(0);
+                }
+            }
+        }
+
+        /* Fallback for browsers without scroll-driven animations */
+        @supports not (animation-timeline: view()) {
+            .slide {
+                opacity: 0;
+                animation: fadeIn 0.8s ease-out forwards;
+            }
+
+            @keyframes fadeIn {
+                to {
+                    opacity: 1;
+                }
+            }
+        }
+
+        /* Slide 1: Title */
+        .slide-1 {
+            background: var(--black);
+            overflow: hidden;
+        }
+
+        .geometric-bg {
+            position: absolute;
+            width: 120%;
+            height: 120%;
+            top: -10%;
+            left: -10%;
+        }
+
+        .geo-shape {
+            position: absolute;
+            background: var(--orange);
+            opacity: 0.15;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .geo-1 {
+            width: 600px;
+            height: 600px;
+            top: -100px;
+            left: -200px;
+            transform: rotate(45deg);
+            animation-delay: 0s;
+        }
+
+        .geo-2 {
+            width: 500px;
+            height: 500px;
+            bottom: -150px;
+            right: -150px;
+            transform: rotate(-30deg);
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) rotate(45deg);
+            }
+            50% {
+                transform: translate(30px, -30px) rotate(50deg);
+            }
+        }
+
+        .title-content {
+            text-align: center;
+            z-index: 2;
+        }
+
+        .title-content h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 10vw, 7rem);
+            font-weight: 900;
+            line-height: 0.95;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--white) 0%, var(--orange) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--orange);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        .meta {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+        }
+
+        /* Slide 2: Definition */
+        .slide-2 {
+            background: var(--off-white);
+            color: var(--black);
+        }
+
+        .content-wrapper {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .slide-header {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .slide-header::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100px;
+            height: 5px;
+            background: var(--orange);
+        }
+
+        .definition-box {
+            background: var(--pale-orange);
+            padding: 2.5rem;
+            border-left: 8px solid var(--orange);
+            margin: 3rem 0;
+            font-size: 1.3rem;
+            line-height: 1.8;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .example-card {
+            background: white;
+            padding: 2rem;
+            border: 3px solid var(--orange);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .example-card:nth-child(2) {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .card-header {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            background: var(--orange);
+            padding: 1rem;
+            margin: -2rem -2rem 1.5rem -2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        th, td {
+            padding: 0.8rem;
+            text-align: center;
+            border: 1px solid var(--orange);
+        }
+
+        th {
+            background: var(--black);
+            color: white;
+            font-weight: 600;
+        }
+
+        .highlight {
+            color: var(--orange);
+            font-weight: 600;
+        }
+
+        /* Slide 3: Creating Tables */
+        .slide-3 {
+            background: var(--off-white);
+            color: var(--black);
+        }
+
+        .step-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--orange);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .step-text {
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .example-table-wrapper {
+            background: white;
+            padding: 2rem;
+            border: 3px solid var(--orange);
+        }
+
+        /* Slide 4: Interactive Demo */
+        .slide-4 {
+            background: var(--off-white);
+            color: var(--black);
+        }
+
+        .interactive-demo {
+            background: white;
+            padding: 2.5rem;
+            border: 4px solid var(--orange);
+            margin-top: 2rem;
+        }
+
+        .demo-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .demo-button {
+            padding: 0.8rem 1.5rem;
+            background: var(--orange);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-family: 'Crimson Pro', serif;
+            transition: all 0.3s ease;
+        }
+
+        .demo-button:hover {
+            background: var(--light-orange);
+            transform: translateY(-2px);
+        }
+
+        .demo-button:active {
+            transform: translateY(0);
+        }
+
+        .demo-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .demo-table {
+            background: var(--pale-orange);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .demo-table h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: var(--orange);
+        }
+
+        /* Slide 5: Curves */
+        .slide-5 {
+            background: var(--off-white);
+            color: var(--black);
+        }
+
+        .chart-wrapper {
+            background: white;
+            padding: 2.5rem;
+            border: 4px solid var(--orange);
+            margin-top: 2rem;
+            position: relative;
+        }
+
+        .chart-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            background: var(--black);
+            padding: 1rem;
+            margin: -2.5rem -2.5rem 2rem -2.5rem;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 400px !important;
+        }
+
+        .plotting-steps {
+            background: var(--pale-orange);
+            padding: 2rem;
+            border-left: 8px solid var(--orange);
+        }
+
+        .plotting-steps h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--black);
+        }
+
+        .plotting-steps ol {
+            margin-left: 1.5rem;
+            font-size: 1.2rem;
+            line-height: 2;
+        }
+
+        .plotting-steps li {
+            margin-bottom: 0.8rem;
+        }
+
+        .plotting-steps strong {
+            color: var(--orange);
+        }
+
+        /* Slide 6: Finding Median */
+        .slide-6 {
+            background: var(--off-white);
+            color: var(--black);
+        }
+
+        .formula-box {
+            background: var(--black);
+            color: white;
+            padding: 3rem;
+            text-align: center;
+            font-size: 2.5rem;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .formula-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--orange) 0%, transparent 70%);
+            opacity: 0.1;
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .formula {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .formula-accent {
+            color: var(--orange);
+            font-size: 3rem;
+        }
+
+        .method-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .method-box h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--orange);
+            margin-bottom: 1.5rem;
+        }
+
+        .example-result {
+            background: var(--orange);
+            color: white;
+            padding: 2rem;
+            font-size: 1.3rem;
+            line-height: 1.8;
+        }
+
+        .big-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--black);
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Slide 7: Quartiles */
+        .slide-7 {
+            background: var(--off-white);
+            color: var(--black);
+        }
+
+        .quartile-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .quartile-card {
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .quartile-card:nth-child(1) {
+            background: var(--orange);
+        }
+
+        .quartile-card:nth-child(2) {
+            background: var(--black);
+        }
+
+        .quartile-card:nth-child(3) {
+            background: var(--orange);
+        }
+
+        .quartile-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .quartile-formula {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .quartile-card:nth-child(2) .quartile-formula {
+            color: var(--orange);
+        }
+
+        .example-calculations {
+            background: var(--pale-orange);
+            padding: 2.5rem;
+            border-left: 8px solid var(--orange);
+            margin-top: 3rem;
+        }
+
+        .example-calculations h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .calculation-line {
+            font-size: 1.2rem;
+            line-height: 2.2;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Slide 8: IQR */
+        .slide-8 {
+            background: var(--off-white);
+            color: var(--black);
+        }
+
+        .iqr-formula {
+            background: var(--black);
+            color: white;
+            padding: 4rem;
+            text-align: center;
+            margin: 3rem 0;
+            position: relative;
+        }
+
+        .iqr-formula-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--orange);
+        }
+
+        /* Slide 9: Worked Example */
+        .slide-9 {
+            background: var(--off-white);
+            color: var(--black);
+        }
+
+        .problem-solution-grid {
+            display: grid;
+            grid-template-columns: 45% 55%;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .problem-box {
+            background: var(--pale-orange);
+            padding: 2rem;
+            border-left: 8px solid var(--orange);
+        }
+
+        .problem-box h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--orange);
+            margin-bottom: 1.5rem;
+        }
+
+        .solution-box {
+            background: var(--black);
+            color: white;
+            padding: 2rem;
+        }
+
+        .solution-box h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--orange);
+            margin-bottom: 1.5rem;
+        }
+
+        .solution-step {
+            margin-bottom: 1.2rem;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        .solution-step strong {
+            color: var(--orange);
+        }
+
+        .final-answer {
+            background: var(--orange);
+            padding: 1.5rem;
+            margin-top: 2rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        /* Slide 10: Key Points */
+        .slide-10 {
+            background: var(--off-white);
+            color: var(--black);
+        }
+
+        .key-points-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .key-point {
+            background: white;
+            padding: 1.8rem;
+            border-left: 8px solid var(--orange);
+            border: 1px solid #ddd;
+            border-left: 8px solid var(--orange);
+        }
+
+        .key-point h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--orange);
+            margin-bottom: 0.8rem;
+        }
+
+        .key-point p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: var(--black);
+        }
+
+        /* Exam Questions Slides */
+        .exam-question-slide {
+            background: var(--off-white);
+            color: var(--black);
+        }
+
+        .question-container {
+            background: white;
+            padding: 2.5rem;
+            border: 3px solid var(--orange);
+            margin-top: 2rem;
+        }
+
+        .question-header {
+            background: var(--black);
+            color: white;
+            padding: 1rem;
+            margin: -2.5rem -2.5rem 2rem -2.5rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+        }
+
+        .question-part {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: var(--pale-orange);
+            border-left: 5px solid var(--orange);
+        }
+
+        .question-part h4 {
+            font-family: 'Playfair Display', serif;
+            color: var(--orange);
+            margin-bottom: 1rem;
+        }
+
+        .marks-badge {
+            display: inline-block;
+            background: var(--orange);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .marking-scheme {
+            background: var(--black);
+            color: white;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .marking-scheme h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--orange);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .mark-point {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(255, 107, 53, 0.1);
+            border-left: 3px solid var(--orange);
+        }
+
+        .mark-point strong {
+            color: var(--orange);
+        }
+
+        .graph-image {
+            width: 100%;
+            max-width: 600px;
+            margin: 2rem auto;
+            display: block;
+            border: 2px solid var(--orange);
+        }
+
+        /* Slide 11: Closing */
+        .slide-11 {
+            background: var(--black);
+            overflow: hidden;
+        }
+
+        .closing-content {
+            text-align: center;
+            z-index: 2;
+        }
+
+        .closing-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 900;
+            color: var(--orange);
+            margin-bottom: 2rem;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+            }
+            50% {
+                text-shadow: 0 0 40px rgba(255, 107, 53, 0.8);
+            }
+        }
+
+        .closing-content p {
+            font-size: 1.5rem;
+            color: var(--white);
+            margin-bottom: 1rem;
+        }
+
+        .closing-content .meta {
+            font-size: 1.2rem;
+            color: var(--light-orange);
+        }
+
+        /* Navigation */
+        .nav-dots {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: var(--orange);
+            transform: scale(1.5);
+        }
+
+        .nav-dot:hover {
+            background: var(--orange);
+            transform: scale(1.3);
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: var(--orange);
+            z-index: 1000;
+            transition: width 0.3s ease;
+        }
+
+        /* Keyboard hints */
+        .keyboard-hint {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            z-index: 100;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 2rem;
+            }
+
+            .two-col,
+            .method-grid,
+            .problem-solution-grid,
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quartile-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .slide-header {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <div class="nav-dots" id="navDots"></div>
+    
+    <div class="container" id="container">
+        <!-- Slide 1: Title -->
+        <section class="slide slide-1" data-slide="1">
+            <div class="geometric-bg">
+                <div class="geo-shape geo-1"></div>
+                <div class="geo-shape geo-2"></div>
+            </div>
+            <div class="title-content">
+                <h1>CUMULATIVE<br>FREQUENCY</h1>
+                <p class="subtitle">Cambridge A Level Mathematics 9709</p>
+                <p class="meta">Paper 5: Probability & Statistics 1 | Section 5.1</p>
+            </div>
+        </section>
+
+        <!-- Slide 2: What is CF -->
+        <section class="slide slide-2" data-slide="2">
+            <div class="content-wrapper">
+                <h2 class="slide-header">What is Cumulative Frequency?</h2>
+                
+                <div class="definition-box">
+                    Cumulative frequency is the <strong style="color: var(--orange);">running total</strong> of frequencies in a frequency distribution. It shows how many data values are <strong style="color: var(--orange);">less than or equal to</strong> a given value.
+                </div>
+
+                <div class="two-col">
+                    <div class="example-card">
+                        <div class="card-header">Simple Example</div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Score</th>
+                                    <th>Frequency</th>
+                                    <th>Cumulative</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1</td><td>3</td><td class="highlight">3</td></tr>
+                                <tr><td>2</td><td>5</td><td class="highlight">8</td></tr>
+                                <tr><td>3</td><td>4</td><td class="highlight">12</td></tr>
+                                <tr><td>4</td><td>2</td><td class="highlight">14</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="example-card">
+                        <div class="card-header">Key Concept</div>
+                        <p style="font-size: 1.2rem; line-height: 1.8; margin-top: 1rem;">
+                            Each cumulative frequency is calculated by <span class="highlight">adding</span> the current frequency to the <span class="highlight">previous cumulative frequency</span>.
+                        </p>
+                        <p style="font-style: italic; margin-top: 1.5rem; color: var(--light-orange); font-size: 1.1rem;">
+                            CF₂ = F₁ + F₂ = 3 + 5 = 8
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 3: Creating Tables -->
+        <section class="slide slide-3" data-slide="3">
+            <div class="content-wrapper">
+                <h2 class="slide-header">Creating Cumulative Frequency Tables</h2>
+                
+                <div class="two-col">
+                    <div>
+                        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 2rem; color: var(--orange);">Step-by-Step Process</h3>
+                        <div class="step-list">
+                            <div class="step-item">
+                                <div class="step-number">1</div>
+                                <div class="step-text">List class intervals and frequencies</div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">2</div>
+                                <div class="step-text">Add a cumulative frequency column</div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">3</div>
+                                <div class="step-text">First CF = first frequency</div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">4</div>
+                                <div class="step-text">Each subsequent CF = previous CF + current frequency</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="example-table-wrapper">
+                        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--black);">Example: Test Scores</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Score</th>
+                                    <th>Frequency</th>
+                                    <th>Cumulative Frequency</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>0 < x ≤ 10</td><td>5</td><td class="highlight">5</td></tr>
+                                <tr><td>10 < x ≤ 20</td><td>12</td><td class="highlight">17</td></tr>
+                                <tr><td>20 < x ≤ 30</td><td>18</td><td class="highlight">35</td></tr>
+                                <tr><td>30 < x ≤ 40</td><td>15</td><td class="highlight">50</td></tr>
+                                <tr><td>40 < x ≤ 50</td><td>10</td><td class="highlight">60</td></tr>
+                            </tbody>
+                        </table>
+                        <p style="text-align: right; margin-top: 1rem; font-style: italic; color: #666;">Total n = 60 students</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 4: Interactive Demo -->
+        <section class="slide slide-4" data-slide="4">
+            <div class="content-wrapper">
+                <h2 class="slide-header">Interactive Cumulative Frequency Demo</h2>
+                
+                <div class="interactive-demo">
+                    <div class="demo-controls">
+                        <button class="demo-button" id="animateBtn" onclick="animateCumulativeFrequency()">▶ Animate Cumulative Frequency</button>
+                        <button class="demo-button" onclick="showQuartiles()">Show Q₁, Q₂, Q₃</button>
+                        <button class="demo-button" onclick="resetDemo()">↻ Reset</button>
+                    </div>
+                    
+                    <div class="demo-grid">
+                        <div class="demo-table">
+                            <h4>Frequency Table</h4>
+                            <table id="freqTable">
+                                <thead>
+                                    <tr>
+                                        <th>Score</th>
+                                        <th>Frequency</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>0 < x ≤ 10</td><td>5</td></tr>
+                                    <tr><td>10 < x ≤ 20</td><td>12</td></tr>
+                                    <tr><td>20 < x ≤ 30</td><td>18</td></tr>
+                                    <tr><td>30 < x ≤ 40</td><td>15</td></tr>
+                                    <tr><td>40 < x ≤ 50</td><td>10</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="demo-table">
+                            <h4>Cumulative Frequency Table</h4>
+                            <table id="cfTable">
+                                <thead>
+                                    <tr>
+                                        <th>Upper Bound</th>
+                                        <th>Cumulative Freq</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>10</td><td id="cf1">-</td></tr>
+                                    <tr><td>20</td><td id="cf2">-</td></tr>
+                                    <tr><td>30</td><td id="cf3">-</td></tr>
+                                    <tr><td>40</td><td id="cf4">-</td></tr>
+                                    <tr><td>50</td><td id="cf5">-</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem;">
+                        <canvas id="interactiveChart"></canvas>
+                    </div>
+                    
+                    <div id="quartileInfo" style="margin-top: 1.5rem; padding: 1rem; background: var(--pale-orange); display: none; border-left: 5px solid var(--orange);">
+                        <h4 style="font-family: 'Playfair Display', serif; color: var(--orange); margin-bottom: 0.5rem;">Quartile Values:</h4>
+                        <p id="quartileText" style="font-size: 1.1rem;"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 5: Curves -->
+        <section class="slide slide-5" data-slide="5">
+            <div class="content-wrapper">
+                <h2 class="slide-header">Cumulative Frequency Curves</h2>
+                
+                <div class="two-col">
+                    <div class="plotting-steps">
+                        <h3>Plotting the Curve</h3>
+                        <ol>
+                            <li>Use <strong>upper class boundaries</strong> on x-axis</li>
+                            <li>Plot cumulative frequency on y-axis</li>
+                            <li>Start at (0, 0) or lower boundary of first class</li>
+                            <li>Plot points at upper boundary of each class</li>
+                            <li>Join with a <strong>smooth S-shaped curve</strong></li>
+                        </ol>
+                    </div>
+
+                    <div class="chart-wrapper">
+                        <div class="chart-title">Example Curve</div>
+                        <canvas id="cfChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 6: Finding Median -->
+        <section class="slide slide-6" data-slide="6">
+            <div class="content-wrapper">
+                <h2 class="slide-header">Finding the Median from CF Curve</h2>
+                
+                <div class="formula-box">
+                    <div class="formula">
+                        Median position: <span class="formula-accent">n/2</span>
+                        <div style="font-size: 1.2rem; margin-top: 1rem; opacity: 0.8;">where n = total frequency</div>
+                    </div>
+                </div>
+
+                <div class="method-grid">
+                    <div class="method-box">
+                        <h3>Method:</h3>
+                        <div class="step-list">
+                            <div class="step-item">
+                                <div class="step-number">1</div>
+                                <div class="step-text">Calculate n/2</div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">2</div>
+                                <div class="step-text">Draw horizontal line from n/2 to curve</div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">3</div>
+                                <div class="step-text">Draw vertical line down to x-axis</div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">4</div>
+                                <div class="step-text">Read the value — this is the median</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="method-box">
+                        <h3>Example</h3>
+                        <div class="example-result">
+                            <p style="margin-bottom: 1rem;"><strong>If n = 60</strong></p>
+                            <p style="margin-bottom: 1rem;">Median position = 60/2 = <span class="big-number">30</span></p>
+                            <p style="margin-bottom: 0.5rem;">From the curve at CF = 30,</p>
+                            <p>read across to find <span class="big-number">median ≈ 27</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 7: Quartiles -->
+        <section class="slide slide-7" data-slide="7">
+            <div class="content-wrapper">
+                <h2 class="slide-header">Finding Quartiles</h2>
+                
+                <div class="quartile-cards">
+                    <div class="quartile-card">
+                        <h3>Lower Quartile (Q₁)</h3>
+                        <div class="quartile-formula">n/4</div>
+                    </div>
+                    <div class="quartile-card">
+                        <h3>Median (Q₂)</h3>
+                        <div class="quartile-formula">n/2</div>
+                    </div>
+                    <div class="quartile-card">
+                        <h3>Upper Quartile (Q₃)</h3>
+                        <div class="quartile-formula">3n/4</div>
+                    </div>
+                </div>
+
+                <div class="example-calculations">
+                    <h3>Example: For n = 60</h3>
+                    <div class="calculation-line">
+                        Q₁ position = <span class="highlight">60/4 = 15</span> → From curve: <span class="highlight">Q₁ ≈ 19</span>
+                    </div>
+                    <div class="calculation-line">
+                        Q₂ position = <span style="font-weight: 600;">60/2 = 30</span> → From curve: <span style="font-weight: 600;">Q₂ ≈ 27</span>
+                    </div>
+                    <div class="calculation-line">
+                        Q₃ position = <span class="highlight">3×60/4 = 45</span> → From curve: <span class="highlight">Q₃ ≈ 37</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 8: IQR -->
+        <section class="slide slide-8" data-slide="8">
+            <div class="content-wrapper">
+                <h2 class="slide-header">Interquartile Range (IQR)</h2>
+                
+                <div class="definition-box">
+                    The interquartile range measures the <strong style="color: var(--orange);">spread of the middle 50%</strong> of the data. It is <strong style="color: var(--orange);">less affected by outliers</strong> than the range.
+                </div>
+
+                <div class="iqr-formula">
+                    <div class="iqr-formula-text">IQR = Q₃ − Q₁</div>
+                </div>
+
+                <div class="example-calculations">
+                    <h3>Example:</h3>
+                    <p style="font-size: 1.2rem; margin-bottom: 1rem;">From our previous example:</p>
+                    <p style="font-size: 1.3rem; margin-bottom: 1.5rem;"><strong>Q₃ = 37, Q₁ = 19</strong></p>
+                    <p style="font-size: 1.5rem; color: var(--orange); font-weight: 600;">IQR = 37 − 19 = 18</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 9: Worked Example -->
+        <section class="slide slide-9" data-slide="9">
+            <div class="content-wrapper">
+                <h2 class="slide-header">Worked Example</h2>
+                
+                <div class="problem-solution-grid">
+                    <div class="problem-box">
+                        <h3>Problem</h3>
+                        <p style="margin-bottom: 1rem;">The times (in minutes) taken by 80 students to complete a task:</p>
+                        <table style="margin: 1.5rem 0;">
+                            <thead>
+                                <tr><th>Time (t)</th><th>Frequency</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>0 < t ≤ 5</td><td>8</td></tr>
+                                <tr><td>5 < t ≤ 10</td><td>15</td></tr>
+                                <tr><td>10 < t ≤ 15</td><td>25</td></tr>
+                                <tr><td>15 < t ≤ 20</td><td>20</td></tr>
+                                <tr><td>20 < t ≤ 25</td><td>12</td></tr>
+                            </tbody>
+                        </table>
+                        <p style="font-style: italic;">Find the median and IQR.</p>
+                    </div>
+
+                    <div class="solution-box">
+                        <h3>Solution</h3>
+                        <div class="solution-step">
+                            <strong>Step 1:</strong> Create CF table<br>
+                            <span style="font-size: 0.95rem; opacity: 0.8;">CF values: 8, 23, 48, 68, 80</span>
+                        </div>
+                        <div class="solution-step">
+                            <strong>Step 2:</strong> Find median position<br>
+                            n/2 = 80/2 = <strong>40</strong>
+                        </div>
+                        <div class="solution-step">
+                            <strong>Step 3:</strong> Find quartile positions<br>
+                            Q₁ = 80/4 = <strong>20</strong><br>
+                            Q₃ = 3×80/4 = <strong>60</strong>
+                        </div>
+                        <div class="solution-step">
+                            <strong>Step 4:</strong> Read from curve:<br>
+                            Median ≈ <strong>12 minutes</strong><br>
+                            Q₁ ≈ 8 min, Q₃ ≈ 17 min
+                        </div>
+                        <div class="final-answer">
+                            IQR = 17 − 8 = <strong>9 minutes</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 10: Key Points -->
+        <section class="slide slide-10" data-slide="10">
+            <div class="content-wrapper">
+                <h2 class="slide-header">Key Points to Remember</h2>
+                
+                <div class="key-points-list">
+                    <div class="key-point">
+                        <h4>Cumulative Frequency</h4>
+                        <p>Running total of frequencies — each value adds to the previous total</p>
+                    </div>
+                    <div class="key-point">
+                        <h4>Plotting the Curve</h4>
+                        <p>Always use upper class boundaries on x-axis and join points with a smooth curve</p>
+                    </div>
+                    <div class="key-point">
+                        <h4>Finding Quartiles</h4>
+                        <p>Q₁ at n/4, Median at n/2, Q₃ at 3n/4 — read horizontally from y-axis to curve, then down to x-axis</p>
+                    </div>
+                    <div class="key-point">
+                        <h4>Interquartile Range</h4>
+                        <p>IQR = Q₃ − Q₁ measures spread of middle 50% of data</p>
+                    </div>
+                    <div class="key-point">
+                        <h4>Exam Technique</h4>
+                        <p>Always show working, plot accurately, and use a ruler for reading values from graphs</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exam Question 1: Puzzle Times (cropped graph only) -->
+        <section class="slide exam-question-slide" data-slide="11">
+            <div class="content-wrapper">
+              <button onclick="myFunction()" class="demo-button">Show/Hide MS</button>
+                <h2 class="slide-header">Exam Question: Puzzle Times</h2>
+                
+                <div class="question-container">
+                    <div class="question-header">(9709_w23_51_1)</div>
+                    
+                    <p style="margin-bottom: 1.5rem;">The times taken by 120 children to complete a particular puzzle are represented in the cumulative frequency graph.</p>
+                    
+                    <svg class="graph-image" viewBox="0 0 600 500" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Grid -->
+                        <defs>
+                            <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#ccc" stroke-width="0.5"/>
+                            </pattern>
+                        </defs>
+                        <rect width="600" height="500" fill="url(#grid)"/>
+                        
+                        <!-- Axes -->
+                        <line x1="50" y1="450" x2="550" y2="450" stroke="#000" stroke-width="2"/>
+                        <line x1="50" y1="450" x2="50" y2="50" stroke="#000" stroke-width="2"/>
+                        
+                        <!-- Y-axis labels -->
+                        <text x="30" y="455" font-size="12" text-anchor="end">0</text>
+                        <text x="30" y="405" font-size="12" text-anchor="end">20</text>
+                        <text x="30" y="355" font-size="12" text-anchor="end">40</text>
+                        <text x="30" y="305" font-size="12" text-anchor="end">60</text>
+                        <text x="30" y="255" font-size="12" text-anchor="end">80</text>
+                        <text x="30" y="205" font-size="12" text-anchor="end">100</text>
+                        <text x="30" y="155" font-size="12" text-anchor="end">120</text>
+                        
+                        <!-- X-axis labels -->
+                        <text x="50" y="470" font-size="12" text-anchor="middle">0</text>
+                        <text x="150" y="470" font-size="12" text-anchor="middle">10</text>
+                        <text x="250" y="470" font-size="12" text-anchor="middle">20</text>
+                        <text x="350" y="470" font-size="12" text-anchor="middle">30</text>
+                        <text x="450" y="470" font-size="12" text-anchor="middle">40</text>
+                        <text x="550" y="470" font-size="12" text-anchor="middle">50</text>
+                        
+                        <!-- Axis titles -->
+                        <text x="300" y="495" font-size="14" text-anchor="middle" font-weight="bold">Time (seconds)</text>
+                        <text x="15" y="250" font-size="14" text-anchor="middle" font-weight="bold" transform="rotate(-90 15 250)">Cumulative frequency</text>
+                        
+                        <!-- Cumulative frequency curve -->
+                        <path d="M 50 450 Q 110 440 150 410 T 250 280 T 350 160 T 450 100 T 550 70" 
+                              fill="none" stroke="#FF6B35" stroke-width="3"/>
+                        
+                        <!-- Points on curve -->
+                        <circle cx="50" cy="450" r="4" fill="#FF6B35"/>
+                        <circle cx="150" cy="410" r="4" fill="#FF6B35"/>
+                        <circle cx="250" cy="280" r="4" fill="#FF6B35"/>
+                        <circle cx="350" cy="160" r="4" fill="#FF6B35"/>
+                        <circle cx="450" cy="100" r="4" fill="#FF6B35"/>
+                        <circle cx="550" cy="70" r="4" fill="#FF6B35"/>
+                    </svg>
+                    
+                    <div class="question-part">
+                        <h4>(a) Use the graph to estimate the interquartile range of the data. <span class="marks-badge">[2]</span></h4>
+                    </div>
+                    
+                    <div class="question-part">
+                        <h4>(b) 35% of the children took longer than T seconds to complete the puzzle. Use the graph to estimate the value of T. <span class="marks-badge">[2]</span></h4>
+                    </div>
+                </div>
+                
+                <div class="marking-scheme" id="myDIV">
+                    <h3>Marking Scheme</h3>
+                    
+                    <div class="mark-point">
+                        <strong>Part (a) - M1:</strong> [IQR =] 31 – 23.7. Evidence of graph use must be seen at least once. Range: 30.5 < UQ < 31.25, 23.25 < LQ < 24
+                    </div>
+                    
+                    <div class="mark-point">
+                        <strong>Part (a) - A1:</strong> Final answer: 7.0 ≤ IQR < 7.5. If M0 scored, SC B1 for 7.0 ≤ IQR < 7.5 www.
+                    </div>
+                    
+                    <div class="mark-point">
+                        <strong>Part (b) - B1:</strong> [65% of 120 =] 78. Seen or implied by use on graph.
+                    </div>
+                    
+                    <div class="mark-point">
+                        <strong>Part (b) - B1:</strong> 28 < answer < 29. Line drawn from cf = 78 to graph, then down to x-axis gives T ≈ 28.5 seconds.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exam Question 2: Student Weights -->
+        <section class="slide exam-question-slide" data-slide="12">
+            <div class="content-wrapper">
+              <button onclick="myFunction2()" class="demo-button">Show/Hide MS</button>
+                <h2 class="slide-header">Exam Question: Student Weights</h2>
+                
+                <div class="question-container">
+                    <div class="question-header">(9709_w23_53_4)</div>
+                    
+                    <p style="margin-bottom: 1.5rem;">The weights, x kg, of 120 students in a sports college are recorded. The results are summarised in the following table.</p>
+                    
+                    <table style="margin: 1.5rem 0;">
+                        <thead>
+                            <tr>
+                                <th>Weight (x kg)</th>
+                                <th>x ≤ 40</th>
+                                <th>x ≤ 60</th>
+                                <th>x ≤ 65</th>
+                                <th>x ≤ 70</th>
+                                <th>x ≤ 85</th>
+                                <th>x ≤ 100</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Cumulative frequency</strong></td>
+                                <td>0</td>
+                                <td>14</td>
+                                <td>38</td>
+                                <td>60</td>
+                                <td>106</td>
+                                <td>120</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="question-part">
+                        <h4>(a) Draw a cumulative frequency graph to represent this information. <span class="marks-badge">[2]</span></h4>
+                    </div>
+                    
+                    <div class="question-part">
+                        <h4>(b) It is found that 35% of the students weigh more than W kg. Use your graph to estimate the value of W. <span class="marks-badge">[2]</span></h4>
+                    </div>
+                    
+                    <div class="question-part">
+                        <h4>(c) Calculate estimates for the mean and standard deviation of the weights of the 120 students. <span class="marks-badge">[6]</span></h4>
+                    </div>
+                </div>
+                
+                <div class="marking-scheme" id="myDIV2">
+                    <h3>Marking Scheme</h3>
+                    
+                    <div class="mark-point">
+                        <strong>Part (a) - M1:</strong> At least 3 points plotted accurately at class upper end points (40,0) (60,14) (65,38) (70,60) (85,106) (100,120). Linear cumulative frequency scale 0 ≤ cf ≤ 120 and linear weight scale 40 ≤ weight(kg) ≤ 100 with at least 3 values identified on each axis.
+                    </div>
+                    
+                    <div class="mark-point">
+                        <strong>Part (a) - A1:</strong> All points plotted correctly, curve drawn (within tolerance) and joined to (40,0). Axes labelled cumulative frequency (cf), weight (w) and kg (kilograms) – or a suitable title.
+                    </div>
+                    
+                    <div class="mark-point">
+                        <strong>Part (b) - M1:</strong> [120 × 0.65 =] 78 seen. May be implied by use on graph.
+                    </div>
+                    
+                    <div class="mark-point">
+                        <strong>Part (b) - A1:</strong> 75 < hours < 79. Indication of use of graph required. W ≈ 76 kg
+                    </div>
+                    
+                    <div class="mark-point">
+                        <strong>Part (c) - B1B1:</strong> At least 5 correct frequencies and midpoints. Frequencies: [0] 14 24 22 46 14. Midpoints: 20 50 62.5 67.5 77.5 92.5
+                    </div>
+                    
+                    <div class="mark-point">
+                        <strong>Part (c) - M1A1:</strong> Correct formula for mean = 71.2. Correct formula for variance leading to standard deviation = 11.8
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 11: Closing -->
+        <section class="slide slide-11" data-slide="13">
+            <div class="geometric-bg">
+                <div class="geo-shape geo-1"></div>
+                <div class="geo-shape geo-2"></div>
+            </div>
+            <div class="closing-content">
+                <h2>Practice Makes Perfect!</h2>
+                <p>Master cumulative frequency by working through past paper questions</p>
+                <p class="meta">Cambridge 9709 Paper 5 | Section 5.1</p>
+            </div>
+        </section>
+    </div>
+
+    <div class="keyboard-hint">
+        Use ↑ ↓ arrow keys or scroll to navigate
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.2.1"></script>
+    <script>
+      function myFunction() {
+  var x = document.getElementById("myDIV");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+function myFunction2() {
+  var x = document.getElementById("myDIV2");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+        // Initialize navigation dots
+        const container = document.getElementById('container');
+        const slides = document.querySelectorAll('.slide');
+        const navDots = document.getElementById('navDots');
+        const progressBar = document.getElementById('progressBar');
+        
+        let currentSlide = 0;
+        let interactiveChart = null;
+        let staticChart = null;
+
+        // Create nav dots
+        slides.forEach((slide, index) => {
+            const dot = document.createElement('div');
+            dot.className = 'nav-dot';
+            if (index === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => scrollToSlide(index));
+            navDots.appendChild(dot);
+        });
+
+        function scrollToSlide(index) {
+            slides[index].scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function updateNavigation() {
+            const containerHeight = container.clientHeight;
+            const scrollPosition = container.scrollTop;
+            const totalScrollHeight = container.scrollHeight - containerHeight;
+            
+            // Calculate which slide is most visible
+            let maxVisibility = 0;
+            let mostVisibleSlide = 0;
+            
+            slides.forEach((slide, index) => {
+                const rect = slide.getBoundingClientRect();
+                const slideTop = rect.top;
+                const slideBottom = rect.bottom;
+                const slideHeight = rect.height;
+                
+                // Calculate how much of the slide is visible
+                const visibleTop = Math.max(0, slideTop);
+                const visibleBottom = Math.min(containerHeight, slideBottom);
+                const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+                const visibility = visibleHeight / slideHeight;
+                
+                if (visibility > maxVisibility) {
+                    maxVisibility = visibility;
+                    mostVisibleSlide = index;
+                }
+            });
+            
+            currentSlide = mostVisibleSlide;
+            
+            // Update dots
+            document.querySelectorAll('.nav-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+
+            // Update progress bar based on actual scroll position
+            const progress = (scrollPosition / totalScrollHeight) * 100;
+            progressBar.style.width = Math.min(100, progress) + '%';
+        }
+
+        container.addEventListener('scroll', updateNavigation);
+
+        // Keyboard navigation
+        let isNavigating = false;
+        document.addEventListener('keydown', (e) => {
+            if (isNavigating) return;
+            
+            if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                if (currentSlide < slides.length - 1) {
+                    isNavigating = true;
+                    scrollToSlide(currentSlide + 1);
+                    setTimeout(() => isNavigating = false, 100);
+                }
+            } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                e.preventDefault();
+                if (currentSlide > 0) {
+                    isNavigating = true;
+                    scrollToSlide(currentSlide - 1);
+                    setTimeout(() => isNavigating = false, 100);
+                }
+            }
+        });
+
+        // Interactive Demo Functions
+        let isAnimating = false;
+        const cfValues = [5, 17, 35, 50, 60];
+        
+        function animateCumulativeFrequency() {
+            if (isAnimating) return; // Prevent multiple animations
+            
+            isAnimating = true;
+            const animateBtn = document.getElementById('animateBtn');
+            animateBtn.disabled = true;
+            
+            let step = 0;
+            
+            function animateStep() {
+                if (step >= cfValues.length) {
+                    isAnimating = false;
+                    animateBtn.disabled = false;
+                    return;
+                }
+                
+                // Update CF table
+                document.getElementById(`cf${step + 1}`).textContent = cfValues[step];
+                document.getElementById(`cf${step + 1}`).style.color = '#FF6B35';
+                document.getElementById(`cf${step + 1}`).style.fontWeight = '700';
+                
+                // Update chart
+                if (interactiveChart) {
+                    const data = [0];
+                    for (let i = 0; i <= step; i++) {
+                        data.push(cfValues[i]);
+                    }
+                    while (data.length < 6) {
+                        data.push(null);
+                    }
+                    
+                    interactiveChart.data.datasets[0].data = data;
+                    interactiveChart.update();
+                }
+                
+                step++;
+                
+                if (step <= cfValues.length) {
+                    setTimeout(animateStep, 800);
+                } else {
+                    isAnimating = false;
+                    animateBtn.disabled = false;
+                }
+            }
+            
+            animateStep();
+        }
+        
+        function showQuartiles() {
+            const n = 60;
+            const q1Pos = n / 4; // 15
+            const q2Pos = n / 2; // 30
+            const q3Pos = (3 * n) / 4; // 45
+            
+            // Estimate values from curve
+            const q1 = 19;
+            const q2 = 27;
+            const q3 = 37;
+            
+            // Show all CF values first
+            for (let i = 0; i < cfValues.length; i++) {
+                document.getElementById(`cf${i + 1}`).textContent = cfValues[i];
+                document.getElementById(`cf${i + 1}`).style.color = '#FF6B35';
+                document.getElementById(`cf${i + 1}`).style.fontWeight = '700';
+            }
+            
+            // Update chart with all data and quartile lines
+            if (interactiveChart) {
+                interactiveChart.data.datasets[0].data = [0, 5, 17, 35, 50, 60];
+                
+                // Add horizontal lines for quartiles
+                interactiveChart.options.plugins.annotation = {
+                    annotations: {
+                        q1Line: {
+                            type: 'line',
+                            yMin: q1Pos,
+                            yMax: q1Pos,
+                            borderColor: '#FF6B35',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            label: {
+                                display: true,
+                                content: `Q₁ (n/4 = ${q1Pos})`,
+                                position: 'start',
+                                backgroundColor: '#FF6B35',
+                                color: 'white',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                },
+                                padding: 4
+                            }
+                        },
+                        q2Line: {
+                            type: 'line',
+                            yMin: q2Pos,
+                            yMax: q2Pos,
+                            borderColor: '#0A0A0A',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            label: {
+                                display: true,
+                                content: `Q₂/Median (n/2 = ${q2Pos})`,
+                                position: 'start',
+                                backgroundColor: '#0A0A0A',
+                                color: 'white',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                },
+                                padding: 4
+                            }
+                        },
+                        q3Line: {
+                            type: 'line',
+                            yMin: q3Pos,
+                            yMax: q3Pos,
+                            borderColor: '#FF6B35',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            label: {
+                                display: true,
+                                content: `Q₃ (3n/4 = ${q3Pos})`,
+                                position: 'start',
+                                backgroundColor: '#FF6B35',
+                                color: 'white',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                },
+                                padding: 4
+                            }
+                        },
+                        // Vertical lines showing where they intersect the curve
+                        q1Vertical: {
+                            type: 'line',
+                            xMin: q1,
+                            xMax: q1,
+                            yMin: 0,
+                            yMax: q1Pos,
+                            borderColor: '#FF6B35',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            label: {
+                                display: true,
+                                content: `≈ ${q1}`,
+                                position: 'end',
+                                backgroundColor: '#FF6B35',
+                                color: 'white',
+                                font: {
+                                    size: 11,
+                                    weight: 'bold'
+                                },
+                                padding: 3
+                            }
+                        },
+                        q2Vertical: {
+                            type: 'line',
+                            xMin: q2,
+                            xMax: q2,
+                            yMin: 0,
+                            yMax: q2Pos,
+                            borderColor: '#0A0A0A',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            label: {
+                                display: true,
+                                content: `≈ ${q2}`,
+                                position: 'end',
+                                backgroundColor: '#0A0A0A',
+                                color: 'white',
+                                font: {
+                                    size: 11,
+                                    weight: 'bold'
+                                },
+                                padding: 3
+                            }
+                        },
+                        q3Vertical: {
+                            type: 'line',
+                            xMin: q3,
+                            xMax: q3,
+                            yMin: 0,
+                            yMax: q3Pos,
+                            borderColor: '#FF6B35',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            label: {
+                                display: true,
+                                content: `≈ ${q3}`,
+                                position: 'end',
+                                backgroundColor: '#FF6B35',
+                                color: 'white',
+                                font: {
+                                    size: 11,
+                                    weight: 'bold'
+                                },
+                                padding: 3
+                            }
+                        }
+                    }
+                };
+                
+                interactiveChart.update();
+            }
+            
+            // Update the text display
+            document.getElementById('quartileInfo').style.display = 'block';
+            document.getElementById('quartileText').innerHTML = `
+                The dashed lines on the graph show how to read quartiles from the cumulative frequency curve.<br>
+                <strong>IQR</strong> = Q₃ - Q₁ = ${q3} - ${q1} = <span style="color: var(--orange); font-weight: 700;">${q3 - q1}</span>
+            `;
+        }
+        
+        function resetDemo() {
+            isAnimating = false;
+            document.getElementById('animateBtn').disabled = false;
+            
+            // Clear CF table
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`cf${i}`).textContent = '-';
+                document.getElementById(`cf${i}`).style.color = '';
+                document.getElementById(`cf${i}`).style.fontWeight = '';
+            }
+            
+            // Reset chart
+            if (interactiveChart) {
+                interactiveChart.data.datasets[0].data = [0, null, null, null, null, null];
+                interactiveChart.options.plugins.annotation = { annotations: {} };
+                interactiveChart.update();
+            }
+            
+            // Hide quartile info
+            document.getElementById('quartileInfo').style.display = 'none';
+        }
+
+        // Create charts on load
+        window.addEventListener('load', () => {
+            // Interactive Chart
+            const interactiveCtx = document.getElementById('interactiveChart').getContext('2d');
+            
+            const interactiveData = {
+                labels: ['0', '10', '20', '30', '40', '50'],
+                datasets: [{
+                    label: 'Cumulative Frequency',
+                    data: [0, null, null, null, null, null],
+                    borderColor: '#FF6B35',
+                    backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                    borderWidth: 4,
+                    tension: 0.4,
+                    pointRadius: 8,
+                    pointBackgroundColor: '#FF6B35',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 3,
+                    fill: true,
+                    spanGaps: false
+                }]
+            };
+
+            const interactiveConfig = {
+                type: 'line',
+                data: interactiveData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#0A0A0A',
+                            titleColor: '#FF6B35',
+                            bodyColor: '#FFFFFF',
+                            borderColor: '#FF6B35',
+                            borderWidth: 2,
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                title: function(context) {
+                                    return 'Upper Bound: ' + context[0].label;
+                                },
+                                label: function(context) {
+                                    return 'Cumulative Frequency: ' + context.parsed.y;
+                                }
+                            }
+                        },
+                        annotation: {
+                            annotations: {}
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Score (x)',
+                                color: '#0A0A0A',
+                                font: {
+                                    size: 14,
+                                    weight: '600'
+                                }
+                            },
+                            grid: {
+                                display: false
+                            },
+                            min: 0,
+                            max: 50
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Cumulative Frequency',
+                                color: '#0A0A0A',
+                                font: {
+                                    size: 14,
+                                    weight: '600'
+                                }
+                            },
+                            beginAtZero: true,
+                            max: 60,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 600,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            };
+
+            interactiveChart = new Chart(interactiveCtx, interactiveConfig);
+            
+            // Static Chart (Slide 5)
+            const ctx = document.getElementById('cfChart').getContext('2d');
+            
+            const data = {
+                labels: ['0', '10', '20', '30', '40', '50'],
+                datasets: [{
+                    label: 'Cumulative Frequency',
+                    data: [0, 5, 17, 35, 50, 60],
+                    borderColor: '#FF6B35',
+                    backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                    borderWidth: 4,
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointBackgroundColor: '#FF6B35',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    fill: true
+                }]
+            };
+
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#0A0A0A',
+                            titleColor: '#FF6B35',
+                            bodyColor: '#FFFFFF',
+                            borderColor: '#FF6B35',
+                            borderWidth: 2,
+                            padding: 12,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Score (x)',
+                                color: '#0A0A0A',
+                                font: {
+                                    size: 14,
+                                    weight: '600'
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Cumulative Frequency',
+                                color: '#0A0A0A',
+                                font: {
+                                    size: 14,
+                                    weight: '600'
+                                }
+                            },
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            };
+
+            staticChart = new Chart(ctx, config);
+        });
+    </script>
+</body>
+</html>
